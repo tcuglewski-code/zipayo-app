@@ -13,6 +13,10 @@ import {
   LogOut,
   Menu,
   X,
+  CreditCard,
+  BarChart3,
+  Receipt,
+  Users,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -46,6 +50,10 @@ export default function DashboardLayout({
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "QR Codes", href: "/dashboard/qr", icon: QrCode },
+    { name: "Transaktionen", href: "/dashboard/transactions", icon: Receipt },
+    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+    { name: "Team", href: "/dashboard/team", icon: Users },
+    { name: "Stripe Connect", href: "/dashboard/connect", icon: CreditCard },
     { name: "Einstellungen", href: "/dashboard/settings", icon: Settings },
   ]
 

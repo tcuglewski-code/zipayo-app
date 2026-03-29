@@ -18,6 +18,7 @@ model SwiftTapUser {
   
   paymentLinks  SwiftTapPaymentLink[]
   transactions  SwiftTapTransaction[]
+  merchant      Merchant?
 
   @@map("swifttap_users")
 }
@@ -51,4 +52,77 @@ model SwiftTapTransaction {
   user        SwiftTapUser        @relation(fields: [userId], references: [id])
 
   @@map("swifttap_transactions")
+}
+
+// ============================================================
+// SwiftTap L2 Models - Stripe Connect, Analytics, Team
+// ============================================================
+
+model Merchant {
+  id                 String       @id @default(cuid())
+  userId             String       @unique
+  businessName       String
+  businessType       String?
+  stripeAccountId    String?      // Stripe Connect Account ID
+  stripeOnboarded    Boolean      @default(false)
+  platformFeePercent Float        @default(0.5)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  
+  user               SwiftTapUser @relation(fields: [userId], references: [id])
+  payments           Payment[]
+  qrCodes            QRCode[]
+  teamMembers        TeamMember[]
+
+  @@map("merchants")
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  merchantId      String
+  stripePaymentId String?  @unique
+  amount          Int      // in cents
+  currency        String   @default("eur")
+  status          String   // pending, succeeded, failed, refunded
+  description     String?
+  customerEmail   String?
+  qrCodeId        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  merchant        Merchant @relation(fields: [merchantId], references: [id])
+  qrCode          QRCode?  @relation(fields: [qrCodeId], references: [id])
+
+  @@map("payments")
+}
+
+model QRCode {
+  id          String    @id @default(cuid())
+  merchantId  String
+  name        String
+  amount      Int?      // null = variable amount
+  currency    String    @default("eur")
+  description String?
+  isActive    Boolean   @default(true)
+  uses        Int       @default(0)
+  createdAt   DateTime  @default(now())
+  
+  merchant    Merchant  @relation(fields: [merchantId], references: [id])
+  payments    Payment[]
+
+  @@map("qr_codes")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  merchantId  String
+  email       String
+  role        String   @default("member") // owner, admin, member
+  inviteToken String?  @unique
+  accepted    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  merchant    Merchant @relation(fields: [merchantId], references: [id])
+
+  @@map("team_members")
 }
