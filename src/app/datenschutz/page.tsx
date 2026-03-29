@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { Smartphone, ArrowLeft } from "lucide-react"
 import type { Metadata } from "next"
