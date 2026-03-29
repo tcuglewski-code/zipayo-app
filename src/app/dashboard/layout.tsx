@@ -53,6 +53,7 @@ export default function DashboardLayout({
     { name: "Transaktionen", href: "/dashboard/transactions", icon: Receipt },
     { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Team", href: "/dashboard/team", icon: Users },
+    { name: "API-Keys", href: "/dashboard/api-keys", icon: CreditCard },
     { name: "Stripe Connect", href: "/dashboard/connect", icon: CreditCard },
     { name: "Einstellungen", href: "/dashboard/settings", icon: Settings },
   ]

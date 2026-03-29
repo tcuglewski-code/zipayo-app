@@ -13,6 +13,7 @@ SwiftTap ist eine moderne Zahlungsplattform für Händler. Akzeptieren Sie barge
 - 💳 **Stripe Integration** - Sichere Zahlungsabwicklung
 - 📊 **Dashboard** - Echtzeit-Übersicht über Umsätze und Transaktionen
 - 🔐 **Sicher** - PCI-konform powered by Stripe
+- 🔌 **REST API** - Integration für POS-Systeme
 
 ## Tech Stack
 
@@ -54,6 +55,116 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
+## REST API für POS-Integration
+
+SwiftTap bietet eine öffentliche REST API zur Integration in POS-Systeme, Kassensysteme und andere Anwendungen.
+
+### Authentifizierung
+
+Erstellen Sie im Dashboard unter "API-Keys" einen API-Key und senden Sie ihn im Header:
+
+```
+X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+```
+
+### Endpoints
+
+#### Zahlung erstellen
+
+```bash
+POST /api/v1/payment-request
+Content-Type: application/json
+X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+
+{
+  "amount": 1500,           // Betrag in Cents (15.00€)
+  "description": "Rechnung #123",
+  "customerEmail": "kunde@example.com",
+  "expiresInMinutes": 30    // Optional: Ablaufzeit
+}
+```
+
+**Response:**
+```json
+{
+  "paymentId": "clxxx...",
+  "qrUrl": "https://api.qrserver.com/v1/create-qr-code/?...",
+  "payUrl": "https://swifttap-app.vercel.app/pay/clxxx...",
+  "amount": 1500,
+  "expiresAt": "2026-03-29T16:00:00.000Z"
+}
+```
+
+#### Zahlungsstatus abfragen
+
+```bash
+GET /api/v1/payment-status/{paymentId}
+X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+```
+
+**Response:**
+```json
+{
+  "paymentId": "clxxx...",
+  "status": "succeeded",    // pending | succeeded | failed | refunded | cancelled
+  "amount": 1500,
+  "currency": "eur",
+  "paidAt": "2026-03-29T15:35:00.000Z",
+  "refundedAt": null
+}
+```
+
+#### Zahlung abbrechen
+
+```bash
+POST /api/v1/payment-request/{paymentId}/cancel
+X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+```
+
+**Response:**
+```json
+{
+  "paymentId": "clxxx...",
+  "status": "cancelled",
+  "message": "Payment cancelled successfully"
+}
+```
+
+### Beispiel: POS-Integration
+
+```javascript
+// Zahlung erstellen
+const response = await fetch('https://swifttap-app.vercel.app/api/v1/payment-request', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-SwiftTap-Key': process.env.SWIFTTAP_API_KEY
+  },
+  body: JSON.stringify({
+    amount: 2500,  // 25.00€
+    description: 'Bestellung #456'
+  })
+});
+
+const { paymentId, qrUrl, payUrl } = await response.json();
+
+// QR-Code anzeigen...
+
+// Status pollen (alle 3 Sekunden)
+const checkStatus = async () => {
+  const res = await fetch(`https://swifttap-app.vercel.app/api/v1/payment-status/${paymentId}`, {
+    headers: { 'X-SwiftTap-Key': process.env.SWIFTTAP_API_KEY }
+  });
+  const { status } = await res.json();
+  
+  if (status === 'succeeded') {
+    console.log('Zahlung erfolgreich!');
+  } else if (status === 'pending') {
+    setTimeout(checkStatus, 3000);
+  }
+};
+```
+
 ## Stripe Test Mode
 
 Das Projekt ist für Stripe Test Mode konfiguriert. Verwende Test-Kartennummern:
@@ -63,6 +174,15 @@ Das Projekt ist für Stripe Test Mode konfiguriert. Verwende Test-Kartennummern:
 - **Abgelehnt:** 4000 0000 0000 9995
 
 Ablaufdatum: beliebiges zukünftiges Datum, CVC: beliebige 3 Ziffern
+
+## Admin Panel
+
+Das Admin Panel (`/admin`) ist nur für Benutzer mit `role="admin"` oder `email=admin@swifttap.de` zugänglich.
+
+Features:
+- Dashboard mit Gesamt-Statistiken
+- Merchant Management (aktivieren/deaktivieren)
+- Commission Tracking (Platform-Fees)
 
 ## Deployment
 

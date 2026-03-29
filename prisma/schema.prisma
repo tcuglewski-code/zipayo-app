@@ -13,6 +13,7 @@ model SwiftTapUser {
   password      String
   name          String?
   businessName  String?
+  role          String    @default("user") // user, admin
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -66,6 +67,7 @@ model Merchant {
   stripeAccountId    String?      // Stripe Connect Account ID
   stripeOnboarded    Boolean      @default(false)
   platformFeePercent Float        @default(0.5)
+  active             Boolean      @default(true) // S17: Merchant deaktivieren
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
   
@@ -73,25 +75,30 @@ model Merchant {
   payments           Payment[]
   qrCodes            QRCode[]
   teamMembers        TeamMember[]
+  apiKeys            ApiKey[]
 
   @@map("merchants")
 }
 
 model Payment {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   merchantId      String
-  stripePaymentId String?  @unique
-  amount          Int      // in cents
-  currency        String   @default("eur")
-  status          String   // pending, succeeded, failed, refunded
+  stripePaymentId String?   @unique
+  amount          Int       // in cents
+  currency        String    @default("eur")
+  status          String    // pending, succeeded, failed, refunded
   description     String?
   customerEmail   String?
   qrCodeId        String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  platformFee     Int?      // S18: Platform-Fee in Cents
+  expiresAt       DateTime? // S19: Expiration für API-Zahlungen
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  paidAt          DateTime? // S19: Zeitpunkt der Zahlung
+  refundedAt      DateTime? // S19: Zeitpunkt der Rückerstattung
   
-  merchant        Merchant @relation(fields: [merchantId], references: [id])
-  qrCode          QRCode?  @relation(fields: [qrCodeId], references: [id])
+  merchant        Merchant  @relation(fields: [merchantId], references: [id])
+  qrCode          QRCode?   @relation(fields: [qrCodeId], references: [id])
 
   @@map("payments")
 }
@@ -125,4 +132,21 @@ model TeamMember {
   merchant    Merchant @relation(fields: [merchantId], references: [id])
 
   @@map("team_members")
+}
+
+// ============================================================
+// SwiftTap L4 - API Keys für POS-Integration
+// ============================================================
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  merchantId  String
+  key         String    @unique
+  name        String
+  lastUsed    DateTime?
+  createdAt   DateTime  @default(now())
+  
+  merchant    Merchant  @relation(fields: [merchantId], references: [id])
+
+  @@map("api_keys")
 }

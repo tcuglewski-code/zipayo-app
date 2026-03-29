@@ -51,6 +51,10 @@ export async function POST(req: NextRequest) {
         await handleAccountUpdated(event.data.object as Stripe.Account)
         break
 
+      case "charge.refunded":
+        await handleChargeRefunded(event.data.object as Stripe.Charge)
+        break
+
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
@@ -74,14 +78,20 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   })
 
   if (payment) {
+    // Calculate platform fee based on merchant's platformFeePercent
+    const platformFee = Math.round(payment.amount * payment.merchant.platformFeePercent / 100)
+    const paidAt = new Date()
+
     await prisma.payment.update({
       where: { id: payment.id },
       data: {
         status: "succeeded",
+        platformFee,
+        paidAt,
         updatedAt: new Date(),
       },
     })
-    console.log(`Payment ${payment.id} marked as succeeded`)
+    console.log(`Payment ${payment.id} marked as succeeded. Platform fee: ${platformFee} cents`)
 
     // Send receipt email if configured and customer email exists
     if (isResendConfigured() && resend && payment.customerEmail) {
@@ -93,7 +103,7 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
           currency: payment.currency,
           transactionId: payment.id,
           customerEmail: payment.customerEmail,
-          date: new Date(),
+          date: paidAt,
           description: payment.description,
         })
 
@@ -136,6 +146,28 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     console.log(`Payment ${payment.id} marked as failed`)
   } else {
     console.log(`Payment with stripePaymentId ${stripePaymentId} not found`)
+  }
+}
+
+async function handleChargeRefunded(charge: Stripe.Charge) {
+  const stripePaymentId = charge.payment_intent as string
+
+  if (!stripePaymentId) return
+
+  const payment = await prisma.payment.findUnique({
+    where: { stripePaymentId },
+  })
+
+  if (payment) {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: "refunded",
+        refundedAt: new Date(),
+        updatedAt: new Date(),
+      },
+    })
+    console.log(`Payment ${payment.id} marked as refunded`)
   }
 }
 
