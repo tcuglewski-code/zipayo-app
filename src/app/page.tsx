@@ -120,11 +120,11 @@ export default function Home() {
                 <div className="w-12 h-12 bg-accent-50 rounded-lg flex items-center justify-center mb-4">
                   <Layers className="w-6 h-6 text-accent" />
                 </div>
-                <CardTitle className="text-lg">FELDWERK-Integration</CardTitle>
+                <CardTitle className="text-lg">Plattform-Integration</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Nahtlose Integration in FELDWERK-Systeme für Außendienst-Unternehmen.
+                  Nahtlose Integration in bestehende Systeme für Außendienst-Unternehmen.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -299,7 +299,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-accent" />
-                    <span>FELDWERK Integration</span>
+                    <span>Plattform-Integration</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-accent" />
@@ -346,7 +346,7 @@ export default function Home() {
                 <span className="text-xl font-bold text-white">SwiftTap</span>
               </div>
               <p className="text-sm">
-                Die moderne Zahlungsplattform für Händler. Ein Produkt von FELDWERK.
+                Die moderne Zahlungsplattform für Händler.
               </p>
             </div>
             <div>
@@ -360,7 +360,7 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-white mb-4">Unternehmen</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="https://feldwerk.de" className="hover:text-white">Über FELDWERK</a></li>
+                <li><a href="#" className="hover:text-white">Über uns</a></li>
                 <li><a href="#" className="hover:text-white">Blog</a></li>
                 <li><a href="#" className="hover:text-white">Karriere</a></li>
               </ul>
@@ -375,7 +375,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-primary-700 mt-8 pt-8 text-sm text-center">
-            © 2026 SwiftTap by FELDWERK. Alle Rechte vorbehalten.
+            © 2026 SwiftTap. Alle Rechte vorbehalten.
           </div>
         </div>
       </footer>
