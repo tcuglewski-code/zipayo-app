@@ -1,211 +1,276 @@
-# SwiftTap 💳
+# SwiftTap
 
-**Bezahlen so einfach wie ein Tipp**
+**Bezahlen so einfach wie ein Tipp** — Die moderne Zahlungsplattform für Händler.
 
-SwiftTap ist eine moderne Zahlungsplattform für Händler. Akzeptieren Sie bargeldlose Zahlungen via QR-Code in Sekunden.
+![SwiftTap](https://swifttap-app.vercel.app/og-image.png)
 
-![SwiftTap](https://img.shields.io/badge/SwiftTap-Payment%20Platform-00C9B1?style=for-the-badge)
+## 🚀 Was ist SwiftTap?
 
-## Features
+SwiftTap ist eine SaaS-Zahlungsplattform, die es Händlern ermöglicht, bargeldlose Zahlungen via QR-Code und Tap-to-Pay zu akzeptieren. Keine teure Hardware, keine komplizierten Verträge — einfach registrieren, Stripe verbinden und Zahlungen empfangen.
 
-- 🔲 **QR-Code Zahlungen** - Generieren Sie QR-Codes für schnelle Zahlungen
-- 📱 **Tap to Pay** - Nutzen Sie Ihr Smartphone als Zahlungsterminal (coming soon)
-- 💳 **Stripe Integration** - Sichere Zahlungsabwicklung
-- 📊 **Dashboard** - Echtzeit-Übersicht über Umsätze und Transaktionen
-- 🔐 **Sicher** - PCI-konform powered by Stripe
-- 🔌 **REST API** - Integration für POS-Systeme
+**Live-Demo:** [https://swifttap-app.vercel.app](https://swifttap-app.vercel.app)
 
-## Tech Stack
+## ✨ Features
+
+### Für Händler
+- **QR-Code Zahlungen** — Generiere Zahlungs-QR-Codes, Kunden scannen und bezahlen
+- **Tap to Pay** — Nutze dein Smartphone als Zahlungsterminal (NFC)
+- **Echtzeit-Dashboard** — Alle Transaktionen und Umsätze auf einen Blick
+- **Team-Management** — Lade Teammitglieder ein und verwalte Berechtigungen
+- **API-Zugang** — Integriere SwiftTap in deine bestehende Software
+- **Multi-Standorte** — Verwalte mehrere Filialen in einem Account
+- **Custom Branding** — Dein Logo auf Zahlungsseiten (Pro+)
+
+### Für Entwickler
+- **REST API v1** — Vollständige API für Integrationen
+- **Webhook-Events** — Echtzeit-Benachrichtigungen über Zahlungen
+- **Sandbox-Modus** — Teste mit Stripe Test-Keys
+- **TypeScript SDK** — (Coming Soon)
+
+### Sicherheit
+- **PCI-DSS konform** — Powered by Stripe
+- **DSGVO-konform** — Datenschutz nach EU-Standards
+- **Rate Limiting** — Schutz vor API-Missbrauch
+- **Security Headers** — HSTS, CSP, XSS-Protection
+
+## 💰 Preise
+
+| Plan | Preis | Features |
+|------|-------|----------|
+| **Starter** | 0€/Monat | Bis 1.000€ Umsatz, QR-Zahlungen, E-Mail Support |
+| **Pro** | 29€/Monat | Unbegrenzter Umsatz, Tap-to-Pay, API, Branding |
+| **Business** | 79€/Monat | + Multi-Standorte, Team-Management, Account Manager |
+
+**Transaktionsgebühren:** 1,4% + 0,25€ pro Transaktion
+
+## 🛠 Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
 - **Sprache:** TypeScript
-- **Styling:** Tailwind CSS + shadcn/ui
-- **Auth:** NextAuth.js
-- **Database:** PostgreSQL (Neon) + Prisma
-- **Payments:** Stripe
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui
+- **Datenbank:** PostgreSQL (Neon)
+- **ORM:** Prisma
+- **Auth:** NextAuth.js v5
+- **Zahlungen:** Stripe Connect
+- **E-Mail:** Resend
+- **Hosting:** Vercel
 
-## Getting Started
+## 🚀 Schnellstart
 
-### 1. Installation
+### Voraussetzungen
+
+- Node.js 18+
+- npm oder pnpm
+- PostgreSQL Datenbank (oder Neon Account)
+- Stripe Account
+- Resend Account (optional, für E-Mails)
+
+### Installation
 
 ```bash
+# Repository klonen
+git clone https://github.com/tcuglewski-code/swifttap-app.git
+cd swifttap-app
+
+# Dependencies installieren
 npm install
-```
 
-### 2. Environment Setup
+# Umgebungsvariablen kopieren
+cp .env.example .env.local
 
-Kopiere `.env.example` zu `.env` und fülle die Werte aus:
+# .env.local mit deinen Werten ausfüllen (siehe unten)
 
-```bash
-cp .env.example .env
-```
+# Datenbank initialisieren
+npx prisma db push
 
-### 3. Database Setup
-
-```bash
-npx prisma generate
-node scripts/init-db.mjs
-```
-
-### 4. Development Server
-
-```bash
+# Entwicklungsserver starten
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Öffne [http://localhost:3000](http://localhost:3000) im Browser.
 
-## REST API für POS-Integration
+## ⚙️ Umgebungsvariablen
 
-SwiftTap bietet eine öffentliche REST API zur Integration in POS-Systeme, Kassensysteme und andere Anwendungen.
+| Variable | Beschreibung | Pflicht |
+|----------|--------------|---------|
+| `DATABASE_URL` | PostgreSQL Connection String | ✅ |
+| `NEXTAUTH_SECRET` | Secret für JWT-Signierung (min. 32 Zeichen) | ✅ |
+| `NEXTAUTH_URL` | URL deiner App (z.B. http://localhost:3000) | ✅ |
+| `STRIPE_SECRET_KEY` | Stripe API Secret Key (sk_...) | ✅ |
+| `STRIPE_PUBLISHABLE_KEY` | Stripe Publishable Key (pk_...) | ✅ |
+| `STRIPE_WEBHOOK_SECRET` | Stripe Webhook Signing Secret (whsec_...) | ✅ |
+| `RESEND_API_KEY` | Resend API Key für E-Mails | ❌ |
+| `SWIFTTAP_PLATFORM_FEE_PERCENT` | Plattformgebühr in % (default: 1.4) | ❌ |
+
+### Stripe Keys erhalten
+
+1. Erstelle einen [Stripe Account](https://dashboard.stripe.com/register)
+2. Gehe zu [API Keys](https://dashboard.stripe.com/apikeys)
+3. Kopiere Publishable Key und Secret Key
+4. Für Webhooks: [Webhooks](https://dashboard.stripe.com/webhooks) → Add Endpoint
+   - URL: `https://deine-domain.com/api/webhooks/stripe`
+   - Events: `checkout.session.completed`, `payment_intent.succeeded`, `account.updated`
+
+## 📡 API Dokumentation
 
 ### Authentifizierung
 
-Erstellen Sie im Dashboard unter "API-Keys" einen API-Key und senden Sie ihn im Header:
+Alle API-Requests benötigen einen API-Key im Header:
 
-```
-X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+```bash
+Authorization: Bearer st_dein-api-key
+# oder
+X-API-Key: st_dein-api-key
 ```
 
 ### Endpoints
 
-#### Zahlung erstellen
+#### Zahlungsanfrage erstellen
 
 ```bash
-POST /api/v1/payment-request
-Content-Type: application/json
-X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
-
-{
-  "amount": 1500,           // Betrag in Cents (15.00€)
-  "description": "Rechnung #123",
-  "customerEmail": "kunde@example.com",
-  "expiresInMinutes": 30    // Optional: Ablaufzeit
-}
+curl -X POST https://swifttap-app.vercel.app/api/v1/payment-request \
+  -H "Authorization: Bearer st_dein-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 2500,
+    "currency": "eur",
+    "description": "Bestellung #123"
+  }'
 ```
 
 **Response:**
 ```json
 {
-  "paymentId": "clxxx...",
-  "qrUrl": "https://api.qrserver.com/v1/create-qr-code/?...",
-  "payUrl": "https://swifttap-app.vercel.app/pay/clxxx...",
-  "amount": 1500,
-  "expiresAt": "2026-03-29T16:00:00.000Z"
+  "id": "pr_abc123",
+  "amount": 2500,
+  "currency": "eur",
+  "status": "pending",
+  "paymentUrl": "https://swifttap-app.vercel.app/pay/pr_abc123",
+  "qrCodeUrl": "https://swifttap-app.vercel.app/api/qr/pr_abc123",
+  "expiresAt": "2026-03-30T12:00:00Z"
 }
 ```
 
 #### Zahlungsstatus abfragen
 
 ```bash
-GET /api/v1/payment-status/{paymentId}
-X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+curl https://swifttap-app.vercel.app/api/v1/payment-status/pr_abc123 \
+  -H "Authorization: Bearer st_dein-api-key"
 ```
 
 **Response:**
 ```json
 {
-  "paymentId": "clxxx...",
-  "status": "succeeded",    // pending | succeeded | failed | refunded | cancelled
-  "amount": 1500,
+  "id": "pr_abc123",
+  "status": "completed",
+  "amount": 2500,
   "currency": "eur",
-  "paidAt": "2026-03-29T15:35:00.000Z",
-  "refundedAt": null
+  "paidAt": "2026-03-29T14:30:00Z"
 }
 ```
 
-#### Zahlung abbrechen
+#### Zahlungsanfrage stornieren
 
 ```bash
-POST /api/v1/payment-request/{paymentId}/cancel
-X-SwiftTap-Key: st_live_xxxxxxxxxxxxx
+curl -X POST https://swifttap-app.vercel.app/api/v1/payment-request/pr_abc123/cancel \
+  -H "Authorization: Bearer st_dein-api-key"
 ```
 
-**Response:**
+### Webhooks
+
+SwiftTap sendet Webhook-Events an deine konfigurierte URL:
+
 ```json
 {
-  "paymentId": "clxxx...",
-  "status": "cancelled",
-  "message": "Payment cancelled successfully"
+  "event": "payment.completed",
+  "data": {
+    "id": "pr_abc123",
+    "amount": 2500,
+    "currency": "eur",
+    "merchantId": "merch_xyz"
+  },
+  "timestamp": "2026-03-29T14:30:00Z"
 }
 ```
 
-### Beispiel: POS-Integration
+Events:
+- `payment.completed` — Zahlung erfolgreich
+- `payment.failed` — Zahlung fehlgeschlagen
+- `payment.refunded` — Zahlung erstattet
+- `payment.expired` — Zahlungsanfrage abgelaufen
 
-```javascript
-// Zahlung erstellen
-const response = await fetch('https://swifttap-app.vercel.app/api/v1/payment-request', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'X-SwiftTap-Key': process.env.SWIFTTAP_API_KEY
-  },
-  body: JSON.stringify({
-    amount: 2500,  // 25.00€
-    description: 'Bestellung #456'
-  })
-});
+## 🚀 Deploy auf Vercel
 
-const { paymentId, qrUrl, payUrl } = await response.json();
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tcuglewski-code/swifttap-app)
 
-// QR-Code anzeigen...
+1. Klicke auf den Button oben
+2. Verbinde dein GitHub Repository
+3. Füge Umgebungsvariablen hinzu
+4. Deploy!
 
-// Status pollen (alle 3 Sekunden)
-const checkStatus = async () => {
-  const res = await fetch(`https://swifttap-app.vercel.app/api/v1/payment-status/${paymentId}`, {
-    headers: { 'X-SwiftTap-Key': process.env.SWIFTTAP_API_KEY }
-  });
-  const { status } = await res.json();
-  
-  if (status === 'succeeded') {
-    console.log('Zahlung erfolgreich!');
-  } else if (status === 'pending') {
-    setTimeout(checkStatus, 3000);
-  }
-};
+### Manuelle Schritte nach Deploy
+
+1. **Stripe Webhook** konfigurieren mit der Vercel-URL
+2. **Custom Domain** in Vercel Settings hinzufügen (optional)
+3. **Resend Domain** verifizieren für E-Mail-Versand
+
+## 📁 Projektstruktur
+
+```
+swifttap-app/
+├── prisma/
+│   └── schema.prisma       # Datenbankschema
+├── public/
+│   └── robots.txt          # SEO
+├── src/
+│   ├── app/
+│   │   ├── (auth)/         # Login, Register
+│   │   ├── admin/          # Admin Dashboard
+│   │   ├── api/            # API Routes
+│   │   ├── dashboard/      # Merchant Dashboard
+│   │   ├── datenschutz/    # Legal Pages
+│   │   ├── agb/
+│   │   ├── impressum/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx        # Landing Page
+│   │   └── sitemap.ts      # Dynamic Sitemap
+│   ├── components/
+│   │   ├── ui/             # shadcn/ui Components
+│   │   └── providers.tsx
+│   └── lib/
+│       ├── prisma.ts       # Prisma Client
+│       ├── stripe.ts       # Stripe Config
+│       ├── auth.ts         # NextAuth Config
+│       ├── email-templates.ts
+│       ├── rate-limit.ts
+│       ├── validation.ts   # Zod Schemas
+│       └── cors.ts
+├── .env.example
+├── next.config.mjs
+├── package.json
+├── tailwind.config.ts
+└── tsconfig.json
 ```
 
-## Stripe Test Mode
+## 🔒 Sicherheit
 
-Das Projekt ist für Stripe Test Mode konfiguriert. Verwende Test-Kartennummern:
+- Alle Zahlungsdaten werden von Stripe verarbeitet (PCI-DSS Level 1)
+- API-Keys werden gehasht gespeichert
+- Rate Limiting: 100 Requests/Minute pro IP
+- Security Headers (HSTS, X-Frame-Options, etc.)
+- Input-Validierung mit Zod
+- CORS-Whitelist für erlaubte Origins
 
-- **Erfolg:** 4242 4242 4242 4242
-- **3D Secure:** 4000 0025 0000 3155
-- **Abgelehnt:** 4000 0000 0000 9995
+## 📄 Lizenz
 
-Ablaufdatum: beliebiges zukünftiges Datum, CVC: beliebige 3 Ziffern
+MIT License — siehe [LICENSE](LICENSE)
 
-## Admin Panel
+## 🤝 Support
 
-Das Admin Panel (`/admin`) ist nur für Benutzer mit `role="admin"` oder `email=admin@swifttap.de` zugänglich.
-
-Features:
-- Dashboard mit Gesamt-Statistiken
-- Merchant Management (aktivieren/deaktivieren)
-- Commission Tracking (Platform-Fees)
-
-## Deployment
-
-Das Projekt ist für Vercel optimiert:
-
-```bash
-vercel --prod
-```
-
-## Preise
-
-| Plan | Preis | Umsatzlimit |
-|------|-------|-------------|
-| Starter | €0/Monat | bis 1.000€/Monat |
-| Pro | €29/Monat | Unbegrenzt |
-| Business | €79/Monat | Unbegrenzt + Features |
-
-Zusätzlich: 1,4% + 0,25€ pro Transaktion
-
-## Entwickelt von
-
-**FELDWERK** - Digitale Betriebssysteme für KMU im Außendienst
+- **E-Mail:** support@swifttap.de
+- **Issues:** [GitHub Issues](https://github.com/tcuglewski-code/swifttap-app/issues)
 
 ---
 
-© 2026 SwiftTap by FELDWERK. Alle Rechte vorbehalten.
+Made with ❤️ by SwiftTap

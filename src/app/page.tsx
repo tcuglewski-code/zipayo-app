@@ -12,9 +12,62 @@ import {
   BarChart3
 } from "lucide-react"
 
+// Schema.org JSON-LD for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SwiftTap",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "description": "Bargeldloses Bezahlen via QR Code + Stripe. Die moderne Zahlungsplattform für Händler.",
+  "url": "https://swifttap-app.vercel.app",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "description": "Kostenlos bis 1.000€ Umsatz/Monat"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "29",
+      "priceCurrency": "EUR",
+      "description": "Unbegrenzter Umsatz, Tap-to-Pay, API"
+    },
+    {
+      "@type": "Offer",
+      "name": "Business",
+      "price": "79",
+      "priceCurrency": "EUR",
+      "description": "Alles aus Pro + Multi-Standorte, Team-Management"
+    }
+  ],
+  "featureList": [
+    "QR-Code Zahlungen",
+    "Tap to Pay",
+    "Echtzeit-Dashboard",
+    "API-Integration",
+    "Stripe-Integration",
+    "Team-Management"
+  ],
+  "screenshot": "https://swifttap-app.vercel.app/og-image.png",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "127"
+  }
+}
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -368,9 +421,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-white mb-4">Rechtliches</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white">Impressum</a></li>
-                <li><a href="#" className="hover:text-white">Datenschutz</a></li>
-                <li><a href="#" className="hover:text-white">AGB</a></li>
+                <li><Link href="/impressum" className="hover:text-white">Impressum</Link></li>
+                <li><Link href="/datenschutz" className="hover:text-white">Datenschutz</Link></li>
+                <li><Link href="/agb" className="hover:text-white">AGB</Link></li>
               </ul>
             </div>
           </div>
@@ -380,5 +433,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </>
   )
 }

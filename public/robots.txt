@@ -1,0 +1,16 @@
+# SwiftTap robots.txt
+# https://swifttap-app.vercel.app
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api
+Disallow: /api/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+
+# Allow sitemap
+Sitemap: https://swifttap-app.vercel.app/sitemap.xml
