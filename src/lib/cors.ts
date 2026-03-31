@@ -3,7 +3,7 @@
 // ============================================================================
 
 const ALLOWED_ORIGINS = [
-  'https://zipayo-app.vercel.app',
+  'https://swifttap-app.vercel.app', // Current Vercel deployment
   'https://zipayo.de',
   'https://www.zipayo.de',
 ]

@@ -189,7 +189,7 @@ export default function ApiKeysPage() {
           <div>
             <h3 className="font-semibold text-lg mb-2">Zahlung erstellen</h3>
             <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm">
-{`curl -X POST https://zipayo-app.vercel.app/api/v1/payment-request \\
+{`curl -X POST https://swifttap-app.vercel.app/api/v1/payment-request \\
   -H "X-Zipayo-Key: st_live_xxx" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -204,7 +204,7 @@ export default function ApiKeysPage() {
           <div>
             <h3 className="font-semibold text-lg mb-2">Status abfragen</h3>
             <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm">
-{`curl https://zipayo-app.vercel.app/api/v1/payment-status/{paymentId} \\
+{`curl https://swifttap-app.vercel.app/api/v1/payment-status/{paymentId} \\
   -H "X-Zipayo-Key: st_live_xxx"`}
             </pre>
           </div>
@@ -212,7 +212,7 @@ export default function ApiKeysPage() {
           <div>
             <h3 className="font-semibold text-lg mb-2">Zahlung abbrechen</h3>
             <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm">
-{`curl -X POST https://zipayo-app.vercel.app/api/v1/payment-request/{paymentId}/cancel \\
+{`curl -X POST https://swifttap-app.vercel.app/api/v1/payment-request/{paymentId}/cancel \\
   -H "X-Zipayo-Key: st_live_xxx"`}
             </pre>
           </div>

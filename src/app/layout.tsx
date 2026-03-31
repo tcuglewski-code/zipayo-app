@@ -6,7 +6,7 @@ import { Providers } from "@/components/providers"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://zipayo-app.vercel.app'),
+  metadataBase: new URL('https://swifttap-app.vercel.app'),
   title: {
     default: "Zipayo - Bezahlen so einfach wie ein Tipp",
     template: "%s — Zipayo"
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "de_DE",
-    url: "https://zipayo-app.vercel.app",
+    url: "https://swifttap-app.vercel.app",
     siteName: "Zipayo",
     title: "Zipayo - Bezahlen so einfach wie ein Tipp",
     description: "Bargeldloses Bezahlen via QR Code + Stripe. Die moderne Zahlungsplattform für Händler.",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     // yandex: 'your-yandex-verification-code',
   },
   alternates: {
-    canonical: "https://zipayo-app.vercel.app",
+    canonical: "https://swifttap-app.vercel.app",
   },
 }
 
