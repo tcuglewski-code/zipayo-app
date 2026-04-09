@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -10,57 +11,56 @@ import {
   QrCode,
   Smartphone,
   ArrowUpRight,
-  ArrowDownRight,
+  Loader2,
 } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/utils"
 
-// Mock data for demonstration
-const mockStats = {
-  today: 1250.0,
-  week: 8420.5,
-  month: 34567.89,
-  transactions: 142,
+interface DashboardStats {
+  today: number
+  week: number
+  month: number
+  transactions: number
 }
 
-const mockTransactions = [
-  {
-    id: "1",
-    amount: 45.0,
-    status: "succeeded",
-    customerEmail: "kunde1@example.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 5),
-  },
-  {
-    id: "2",
-    amount: 128.5,
-    status: "succeeded",
-    customerEmail: "kunde2@example.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 30),
-  },
-  {
-    id: "3",
-    amount: 23.0,
-    status: "succeeded",
-    customerEmail: "kunde3@example.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60),
-  },
-  {
-    id: "4",
-    amount: 89.99,
-    status: "failed",
-    customerEmail: "kunde4@example.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 90),
-  },
-  {
-    id: "5",
-    amount: 156.0,
-    status: "succeeded",
-    customerEmail: "kunde5@example.com",
-    createdAt: new Date(Date.now() - 1000 * 60 * 120),
-  },
-]
+interface RecentTransaction {
+  id: string
+  amount: number
+  status: string
+  customerEmail: string | null
+  createdAt: string
+}
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [transactions, setTransactions] = useState<RecentTransaction[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        const res = await fetch("/api/dashboard/stats")
+        if (res.ok) {
+          const data = await res.json()
+          setStats(data.stats)
+          setTransactions(data.recentTransactions)
+        }
+      } catch (e) {
+        console.error("Dashboard fetch error:", e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDashboard()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -94,12 +94,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {formatCurrency(mockStats.today)}
+              {formatCurrency(stats?.today ?? 0)}
             </div>
-            <p className="text-xs text-green-600 flex items-center mt-1">
-              <ArrowUpRight className="w-3 h-3 mr-1" />
-              +12% gegenüber gestern
-            </p>
           </CardContent>
         </Card>
 
@@ -112,12 +108,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {formatCurrency(mockStats.week)}
+              {formatCurrency(stats?.week ?? 0)}
             </div>
-            <p className="text-xs text-green-600 flex items-center mt-1">
-              <ArrowUpRight className="w-3 h-3 mr-1" />
-              +8% gegenüber letzter Woche
-            </p>
           </CardContent>
         </Card>
 
@@ -130,12 +122,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {formatCurrency(mockStats.month)}
+              {formatCurrency(stats?.month ?? 0)}
             </div>
-            <p className="text-xs text-red-600 flex items-center mt-1">
-              <ArrowDownRight className="w-3 h-3 mr-1" />
-              -3% gegenüber letztem Monat
-            </p>
           </CardContent>
         </Card>
 
@@ -148,7 +136,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {mockStats.transactions}
+              {stats?.transactions ?? 0}
             </div>
             <p className="text-xs text-gray-500 mt-1">Diesen Monat</p>
           </CardContent>
@@ -164,57 +152,72 @@ export default function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {mockTransactions.map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.status === "succeeded"
-                        ? "bg-green-100"
-                        : "bg-red-100"
-                    }`}
-                  >
-                    <CreditCard
-                      className={`w-5 h-5 ${
+          {transactions.length === 0 ? (
+            <p className="text-center text-gray-500 py-8">Noch keine Transaktionen vorhanden.</p>
+          ) : (
+            <div className="space-y-4">
+              {transactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        transaction.status === "succeeded"
+                          ? "bg-green-100"
+                          : "bg-red-100"
+                      }`}
+                    >
+                      <CreditCard
+                        className={`w-5 h-5 ${
+                          transaction.status === "succeeded"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <p className="font-medium text-primary">
+                        {transaction.customerEmail || "Unbekannter Kunde"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(new Date(transaction.createdAt))}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className={`font-semibold ${
                         transaction.status === "succeeded"
                           ? "text-green-600"
                           : "text-red-600"
                       }`}
-                    />
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">
-                      {transaction.customerEmail}
+                    >
+                      {transaction.status === "succeeded" ? "+" : "-"}
+                      {formatCurrency(transaction.amount)}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      {formatDate(transaction.createdAt)}
+                    <p className="text-xs text-gray-500 capitalize">
+                      {transaction.status === "succeeded"
+                        ? "Erfolgreich"
+                        : "Fehlgeschlagen"}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p
-                    className={`font-semibold ${
-                      transaction.status === "succeeded"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {transaction.status === "succeeded" ? "+" : "-"}
-                    {formatCurrency(transaction.amount)}
-                  </p>
-                  <p className="text-xs text-gray-500 capitalize">
-                    {transaction.status === "succeeded"
-                      ? "Erfolgreich"
-                      : "Fehlgeschlagen"}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {transactions.length > 0 && (
+            <div className="mt-4 text-center">
+              <Link href="/dashboard/transactions">
+                <Button variant="outline" size="sm">
+                  <ArrowUpRight className="w-4 h-4 mr-2" />
+                  Alle Transaktionen anzeigen
+                </Button>
+              </Link>
+            </div>
+          )}
         </CardContent>
       </Card>
 

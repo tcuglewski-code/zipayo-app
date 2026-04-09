@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {
+    root: '.',
+  },
   // Suppress certain warnings in production
   eslint: {
     ignoreDuringBuilds: true,
