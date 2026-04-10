@@ -145,8 +145,22 @@ model ApiKey {
   name        String
   lastUsed    DateTime?
   createdAt   DateTime  @default(now())
-  
+
   merchant    Merchant  @relation(fields: [merchantId], references: [id])
 
   @@map("api_keys")
+}
+
+// ============================================================
+// Password Reset Tokens
+// ============================================================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
 }
